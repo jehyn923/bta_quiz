@@ -26,9 +26,16 @@ public class MyProducerConfig {
     public DirectChannel producerChannel(){
         return new DirectChannel();
     }
+
+    // 출처 적어놓기
     @Bean
     public Map<String,Object> producerConfig(){
-        return null;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServers);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        return properties;
     }
     @Bean
     public ProducerFactory<String, String> producerFactory(){
@@ -39,9 +46,10 @@ public class MyProducerConfig {
         return new KafkaTemplate<>(producerFactory());
     }
     @Bean
-    @ServiceActivator(inputChannel = "producerChannel")
+    @ServiceActivator(inputChannel = "MessageChannel")
     public MessageHandler kafkaMessageHandler(){
         KafkaProducerMessageHandler<String, String> handler = new KafkaProducerMessageHandler<>(kafkaTemplate());
-        return null;
+        handler.setMessageKeyExpression(new LiteralExpression("kafka-integration"));
+        return handler;
     }
 }

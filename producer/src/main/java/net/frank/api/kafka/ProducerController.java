@@ -1,14 +1,18 @@
 package net.frank.api.kafka;
 
 import lombok.RequiredArgsConstructor;
+import net.frank.api.kafka.domain.Quiz;
+import net.frank.api.kafka.service.QuizService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/kafka")
-public class KafkaController {
-    private final KafkaProducer producer;
-
+public class ProducerController {
+    private final ProducerComponent producer;
+    private final QuizService quizService;
     @GetMapping()
     public String kafka(){
         return "Hello Kafka";
@@ -21,4 +25,8 @@ public class KafkaController {
         return "Kafka Successfully";
     }
 
+    @GetMapping("/quizzes")
+    public List<Quiz> getQuizzes(){
+        return quizService.getQuizzes();
+    }
 }
